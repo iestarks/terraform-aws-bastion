@@ -20,3 +20,12 @@ resource "null_resource" "tags_as_list_of_maps" {
   }
 }
 
+#   this_db_instance_hosted_zone_id       = element(concat(aws_db_instance.this_mssql.*.hosted_zone_id, aws_db_instance.this.*.hosted_zone_id, [""]), 0)
+ 
+#  output "this_db_instance_hosted_zone_id" {
+#   description = "The canonical hosted zone ID of the DB instance (to be used in a Route 53 Alias record)"
+#   value       = module.db_instance.this_db_instance_hosted_zone_id
+# }
+
+
+

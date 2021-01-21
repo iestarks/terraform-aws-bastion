@@ -71,13 +71,5 @@ data "aws_subnet" "database" {
 
 
 
-data "aws_security_group" "this" {
-  vpc_id = data.aws_vpc.usbank_vpc.id
-  tags = {
-  Name = "usbank-appserv"
-  }
-}
-
-
 
 

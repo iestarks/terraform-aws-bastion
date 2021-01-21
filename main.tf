@@ -12,6 +12,12 @@ data "template_file" "user_data" {
   }
 }
 
+# data "aws_route53_zone" "bastian_hosted_record" {
+#   name         = "usbank_bastianhost.com."
+#   private_zone = true
+# }
+
+
 resource "aws_kms_key" "key" {
   tags = merge(var.tags)
 }
@@ -200,9 +206,13 @@ resource "aws_iam_role_policy_attachment" "bastion_host" {
   role       = aws_iam_role.bastion_host_role.name
 }
 
+resource "aws_route53_zone" "bastian_hosted_record" {
+ name         = "usbank_bastianhost.com."
+}
+
 resource "aws_route53_record" "bastion_record_name" {
-  name    = var.bastion_record_name
-  zone_id = var.hosted_zone_id
+  name    = aws_route53_zone.bastian_hosted_record.name
+  zone_id = aws_route53_zone.bastian_hosted_record.zone_id
   type    = "A"
   count   = var.create_dns_record ? 1 : 0
 
