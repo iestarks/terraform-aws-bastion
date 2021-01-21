@@ -1,5 +1,6 @@
 variable "bucket_name" {
   description = "Bucket name were the bastion will store the logs"
+  default = "usbank-bucket"
 }
 
 variable "bucket_versioning" {
@@ -19,6 +20,7 @@ variable "tags" {
 }
 
 variable "region" {
+  default = "us-east-1"
 }
 
 variable "cidrs" {
@@ -26,25 +28,27 @@ variable "cidrs" {
   type        = list(string)
 
   default = [
-    "0.0.0.0/0",
+    "10.60.0.0/16",
   ]
 }
 
 variable "is_lb_private" {
   description = "If TRUE the load balancer scheme will be \"internal\" else \"internet-facing\""
+  default = "true"
 }
 
-variable "vpc_id" {
-  description = "VPC id were we'll deploy the bastion"
-}
+# variable "vpc_id" {
+#   description = "VPC id were we'll deploy the bastion"
+# }
 
 variable "bastion_host_key_pair" {
   description = "Select the key pair to use to launch the bastion host"
+  default = "ansiblekey"
 }
 
 variable "hosted_zone_id" {
   description = "Name of the hosted zone were we'll register the bastion DNS name"
-  default     = ""
+  default     = "usbank-bastion-hosted-zone "
 }
 
 variable "bastion_record_name" {
@@ -74,15 +78,15 @@ variable "bastion_ami" {
   default     = ""
 }
 
-variable "elb_subnets" {
-  type        = list(string)
-  description = "List of subnet were the ELB will be deployed"
-}
+# variable "elb_subnets" {
+#   type        = list(string)
+#   description = "List of subnet were the ELB will be deployed"
+# }
 
-variable "auto_scaling_group_subnets" {
-  type        = list(string)
-  description = "List of subnet were the Auto Scalling Group will deploy the instances"
-}
+# variable "auto_scaling_group_subnets" {
+#   type        = list(string)
+#   description = "List of subnet were the Auto Scalling Group will deploy the instances"
+# }
 
 variable "associate_public_ip_address" {
   default = true
@@ -94,6 +98,7 @@ variable "bastion_instance_count" {
 
 variable "create_dns_record" {
   description = "Choose if you want to create a record name for the bastion (LB). If true 'hosted_zone_id' and 'bastion_record_name' are mandatory "
+  default = "true"
 }
 
 variable "log_auto_clean" {

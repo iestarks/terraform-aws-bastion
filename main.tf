@@ -1,3 +1,5 @@
+
+
 data "template_file" "user_data" {
   template = file("${path.module}/user_data.sh")
 
@@ -79,7 +81,7 @@ resource "aws_security_group" "bastion_host_security_group" {
   count       = var.bastion_security_group_id == "" ? 1 : 0
   description = "Enable SSH access to the bastion host from external via SSH port"
   name        = "${local.name_prefix}-host"
-  vpc_id      = var.vpc_id
+  vpc_id = data.aws_vpc.usbank_vpc.id
 
   tags = merge(var.tags)
 }
@@ -91,7 +93,8 @@ resource "aws_security_group_rule" "ingress_bastion" {
   from_port   = var.public_ssh_port
   to_port     = var.public_ssh_port
   protocol    = "TCP"
-  cidr_blocks = concat(data.aws_subnet.subnets.*.cidr_block, var.cidrs)
+  #cidr_blocks = concat(data.aws_subnet.subnets.*.cidr_block, var.cidrs)
+  cidr_blocks = [data.aws_vpc.usbank_vpc.cidr_block]
 
   security_group_id = local.security_group
 }
@@ -111,7 +114,7 @@ resource "aws_security_group_rule" "egress_bastion" {
 resource "aws_security_group" "private_instances_security_group" {
   description = "Enable SSH access to the Private instances from the bastion via SSH port"
   name        = "${local.name_prefix}-priv-instances"
-  vpc_id      = var.vpc_id
+  vpc_id = data.aws_vpc.usbank_vpc.id
 
   tags = merge(var.tags)
 }
@@ -214,7 +217,8 @@ resource "aws_lb" "bastion_lb" {
   internal = var.is_lb_private
   name     = "${local.name_prefix}-lb"
 
-  subnets = var.elb_subnets
+  subnets =  data.aws_subnet.public.*.id
+  
 
   load_balancer_type = "network"
   tags               = merge(var.tags)
@@ -224,7 +228,7 @@ resource "aws_lb_target_group" "bastion_lb_target_group" {
   name        = "${local.name_prefix}-lb-target"
   port        = var.public_ssh_port
   protocol    = "TCP"
-  vpc_id      = var.vpc_id
+  vpc_id = data.aws_vpc.usbank_vpc.id
   target_type = "instance"
 
   health_check {
@@ -295,7 +299,7 @@ resource "aws_autoscaling_group" "bastion_auto_scaling_group" {
   min_size         = var.bastion_instance_count
   desired_capacity = var.bastion_instance_count
 
-  vpc_zone_identifier = var.auto_scaling_group_subnets
+  vpc_zone_identifier = data.aws_subnet.public.*.id
 
   default_cooldown          = 180
   health_check_grace_period = 180
