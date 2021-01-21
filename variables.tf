@@ -46,6 +46,8 @@ variable "bastion_host_key_pair" {
   default = "ansiblekey"
 }
 
+
+
 variable "hosted_zone_id" {
   description = "Name of the hosted zone were we'll register the bastion DNS name"
   default     = "usbank-bastion-hosted-zone "
@@ -125,6 +127,12 @@ variable "public_ssh_port" {
   description = "Set the SSH port to use from desktop to the bastion"
   default     = 22
 }
+variable "public_access_icmp_port" {
+  description = "Set the SSH port to use from desktop to the bastion"
+  default     = -1
+}
+
+
 
 variable "private_ssh_port" {
   description = "Set the SSH port to use between the bastion and private instance"

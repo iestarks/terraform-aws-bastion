@@ -105,6 +105,33 @@ resource "aws_security_group_rule" "ingress_bastion" {
   security_group_id = local.security_group
 }
 
+resource "aws_security_group_rule" "ingress_bastion_public" {
+  count       = var.bastion_security_group_id == "" ? 1 : 0
+  description = "Incoming traffic to bastion"
+  type        = "ingress"
+  from_port   = var.public_ssh_port
+  to_port     = var.public_ssh_port
+  protocol    = "TCP"
+  #cidr_blocks = concat(data.aws_subnet.subnets.*.cidr_block, var.cidrs)
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = local.security_group
+}
+
+resource "aws_security_group_rule" "ingress_bastion_ping" {
+  count       = var.bastion_security_group_id == "" ? 1 : 0
+  description = "Incoming traffic to bastion"
+  type        = "ingress"
+  from_port   = var.public_access_icmp_port
+  to_port     = var.public_access_icmp_port
+  protocol    = "ICMP"
+  #cidr_blocks = concat(data.aws_subnet.subnets.*.cidr_block, var.cidrs)
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = local.security_group
+}
+
+
 resource "aws_security_group_rule" "egress_bastion" {
   count       = var.bastion_security_group_id == "" ? 1 : 0
   description = "Outgoing traffic from bastion to instances"
