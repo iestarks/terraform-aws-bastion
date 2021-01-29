@@ -5,17 +5,12 @@ data "template_file" "user_data" {
 
   vars = {
     aws_region              = var.region
-    bucket_name             = var.bucket_name
+    bucket_name             = var.bastian_bucket_name
     extra_user_data_content = var.extra_user_data_content
     allow_ssh_commands      = var.allow_ssh_commands
     public_ssh_port         = var.public_ssh_port
   }
 }
-
-# data "aws_route53_zone" "bastian_hosted_record" {
-#   name         = "usbank_bastianhost.com."
-#   private_zone = true
-# }
 
 
 resource "aws_kms_key" "key" {
@@ -23,12 +18,12 @@ resource "aws_kms_key" "key" {
 }
 
 resource "aws_kms_alias" "alias" {
-  name          = "alias/${replace(var.bucket_name, ".", "_")}"
+  name          = "alias/${replace(var.bastian_bucket_name, ".", "_")}"
   target_key_id = aws_kms_key.key.arn
 }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket = var.bucket_name
+  bucket = var.bastian_bucket_name
   acl    = "private"
 
   server_side_encryption_configuration {
@@ -80,7 +75,7 @@ resource "aws_s3_bucket_object" "bucket_public_keys_readme" {
   bucket     = aws_s3_bucket.bucket.id
   key        = "public-keys/README.txt"
   content    = "Drop here the ssh public keys of the instances you want to control"
-  kms_key_id = aws_kms_key.key.arn
+ kms_key_id = aws_kms_key.key.arn
 }
 
 resource "aws_security_group" "bastion_host_security_group" {
@@ -212,14 +207,14 @@ data "aws_iam_policy_document" "bastion_host_policy_document" {
     }
   }
 
-  statement {
-    actions = [
+  # statement {
+  #   actions = [
 
-      "kms:Encrypt",
-      "kms:Decrypt"
-    ]
-    resources = [aws_kms_key.key.arn]
-  }
+  #     "kms:Encrypt",
+  #     "kms:Decrypt"
+  #   ]
+  #   resources = [aws_kms_key.key.arn]
+  # }
 
 }
 

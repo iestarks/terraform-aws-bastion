@@ -1,6 +1,6 @@
-variable "bucket_name" {
+variable "bastian_bucket_name" {
   description = "Bucket name were the bastion will store the logs"
-  default = "usbank-bucket"
+  default = "usbank-bastian-bucket"
 }
 
 variable "bucket_versioning" {
@@ -9,7 +9,7 @@ variable "bucket_versioning" {
 }
 
 variable "bucket_force_destroy" {
-  default     = false
+  default     = true
   description = "The bucket and all objects should be destroyed when using true"
 }
 

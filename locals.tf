@@ -5,7 +5,7 @@ locals {
   security_group = join("", flatten([aws_security_group.bastion_host_security_group[*].id, var.bastion_security_group_id]))
 
 
-  subnet_ids_string = join(",", data.aws_subnet_ids.database.ids)
+  subnet_ids_string = join(",", data.aws_subnet_ids.public.ids)
   subnet_ids_list = split(",", local.subnet_ids_string)
 
 }
